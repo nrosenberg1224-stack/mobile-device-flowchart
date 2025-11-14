@@ -7,7 +7,7 @@
 ---
 
 ## Link (Bookmark This!)
-**[https://nrosenberg1224.github.io/mobile-field-guide](https://nrosenberg1224.github.io/mobile-field-guide)**
+**[https://github.com/nrosenberg1224-stack/mobile-device-flowchart/tree/main](https://github.com/nrosenberg1224-stack/mobile-device-flowchart/tree/main)**
 
 
 ---
