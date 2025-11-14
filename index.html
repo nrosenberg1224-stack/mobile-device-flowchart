@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobile Device Seizure Flowchart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        #app {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 12px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #0066cc;
+            color: white;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        .result {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 5px solid #4caf50;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="content"></div>
+    </div>
+
+<script>
+// Decision tree data
+const tree = {
+    question: "Is the device powered ON?",
+    yes: {
+        question: "Is the device unlocked and accessible?",
+        yes: {
+            result: "Place in airplane mode immediately. If airplane mode is not available, disable radios manually. Document the condition. Preserve using a Faraday bag if needed."
+        },
+        no: {
+            question: "Do you know the passcode?",
+            yes: {
+                result: "Do NOT power off. Keep device powered and place into Faraday protection. Document condition and proceed with logical acquisition as soon as possible."
+            },
+            no: {
+                result: "Do NOT attempt passcode guesses. Place into Faraday protection. Maintain power if possible to prevent encryption lockout. Seek warrant for compelled unlock if applicable."
+            }
+        }
+    },
+    no: {
+        question: "Do you have legal authority (search warrant / consent)?",
+        yes: {
+            result: "Do NOT power on. Keep the device off. Photograph and document it. Transport to lab for controlled boot under forensic workflow."
+        },
+        no: {
+            result: "Leave powered off. Seize and preserve. Obtain legal authority before powering or examining the device."
+        }
+    }
+};
+
+// App logic
+function renderNode(node) {
+    const content = document.getElementById("content");
+
+    // If node is a result
+    if (node.result) {
+        content.innerHTML = `<div class='result'><strong>Recommended Action:</strong><br>${node.result}</div>`;
+        return;
+    }
+
+    // If node is a question
+    content.innerHTML = `
+        <div class="question">${node.question}</div>
+        <button id="yesBtn">Yes</button>
+        <button id="noBtn">No</button>
+    `;
+
+    document.getElementById("yesBtn").onclick = () => renderNode(node.yes);
+    document.getElementById("noBtn").onclick = () => renderNode(node.no);
+}
+
+// Initialize
+renderNode(tree);
+</script>
+</body>
+</html>
