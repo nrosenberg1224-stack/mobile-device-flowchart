@@ -1,4 +1,4 @@
-[readme.txt](https://github.com/user-attachments/files/23554377/readme.txt)
+[readme.txt](https://github.com/user-attachments/files/23554530/readme.txt)
 # Mobile Evidence Field Guide
 
 **One-click guide for officers collecting phones**  
@@ -7,7 +7,7 @@
 ---
 
 ## Link (Bookmark This!)
-**[https://github.com/nrosenberg1224-stack/mobile-device-flowchart/tree/main](https://github.com/nrosenberg1224-stack/mobile-device-flowchart/tree/main)**
+**[https://nrosenberg1224-stack.github.io/mobile-device-flowchart/](https://nrosenberg1224-stack.github.io/mobile-device-flowchart/)**
 
 
 ---
