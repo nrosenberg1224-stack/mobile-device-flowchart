@@ -1,109 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mobile Device Seizure Flowchart</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-        #app {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .question {
-            font-size: 1.3em;
-            margin-bottom: 20px;
-        }
-        button {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 12px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            background: #0066cc;
-            color: white;
-        }
-        button:hover {
-            background: #0052a3;
-        }
-        .result {
-            background: #e8f5e9;
-            padding: 20px;
-            border-left: 5px solid #4caf50;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mobile Evidence — Field Guide</title>
+  <style>
+    :root{--red:#dc2626;--green:#16a34a;--blue:#1f6feb;--gray:#6b7280;--bg:#f8fafc}
+    html,body{margin:0;height:100%;font-family:system-ui,Arial,sans-serif;background:var(--bg);display:flex;justify-content:center;align-items:center;padding:16px}
+    .wrapper{max-width:900px;width:100%;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.1);overflow:hidden}
+    header{padding:24px;text-align:center;background:#1e293b;color:#fff}
+    h1{font-size:1.5rem;margin:0}
+    .lead{font-size:0.95rem;margin:8px 0 0;opacity:0.9}
+    main{padding:20px}
+    .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:16px}
+    .big-btn{display:block;width:100%;padding:16px;font-size:1.1rem;font-weight:600;border-radius:10px;margin:12px 0;text-align:center;cursor:pointer}
+    .yes{background:#d1fae5;color:#166534;border:2px solid #86efac}
+    .no{background:#fee2e2;color:#991b1b;border:2px solid #fca5a5}
+    .action{background:#dbeafe;color:#1e40af;border:2px solid #93c5fd}
+    .warn{background:#fffbeb;color:#92400e;border-left:5px solid #f59e0b;padding:14px;border-radius:8px;margin:16px 0}
+    .urgent{background:#fef3c7;color:#7c2d12;border-left:5px solid #f97316;padding:14px;border-radius:8px;font-weight:600}
+    .controls{display:flex;gap:8px;margin-top:20px}
+    .ghost-btn{padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer;font-size:0.9rem}
+    .disabled{opacity:0.5;pointer-events:none}
+    .flow-controls{text-align:center;margin-top:16px}
+    footer{padding:12px;font-size:0.8rem;color:var(--gray);text-align:center;border-top:1px solid #e2e8f0}
+    .print-only{display:none}
+    .flowchart{display:none;margin:20px 0;overflow-x:auto}
+    .flowchart.visible{display:block}
+    .flowchart svg{width:100%;min-width:800px;height:auto}
+    .toggle-btn{background:#f1f5f9;color:#1e293b;border:1px solid #cbd5e1;padding:10px 16px;border-radius:8px;font-weight:600;cursor:pointer;margin-top:16px}
+    @media print{
+      .no-print{display:none}
+      .print-only{display:block}
+      .flowchart.visible{display:block}
+      .flowchart svg{width:100%;height:auto}
+      body{margin:0;padding:0}
+    }
+  </style>
 </head>
 <body>
-    <div id="app">
-        <div id="content"></div>
-    </div>
+  <div class="wrapper">
+    <header>
+      <h1>Mobile Evidence Field Guide</h1>
+      <p class="lead">For officers collecting phones</p>
+    </header>
+
+    <main>
+      <!-- Home Screen -->
+      <div id="home" class="card">
+        <p><strong>Follow this guide when seizing a phone.</strong></p>
+        <p>Every minute counts — especially for iPhones.</p>
+        <div class="warn">
+          <strong>Warning: iPhones auto-reboot after 72 hours without passcode → USER Data becomes encypted.</strong>
+        </div>
+        <button class="big-btn action" id="startGuide">Start</button>
+        <button class="toggle-btn" id="showFlowchart">View as Flowchart (Large)</button>
+      </div>
+
+      <!-- Step-by-Step Guide -->
+      <div id="canvas" style="display:none"></div>
+
+      <!-- LARGE FLOWCHART -->
+      <div id="flowchart" class="flowchart">
+        <svg viewBox="0 0 1000 1200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" markerWidth="15" markerHeight="15" refX="14" refY="7" orient="auto">
+              <path d="M0,0 L0,14 L14,7 z" fill="#333"/>
+            </marker>
+          </defs>
+
+          <!-- Start -->
+          <rect x="350" y="30" width="300" height="80" rx="16" fill="#dbeafe" stroke="#93c5fd" stroke-width="3"/>
+          <text x="500" y="70" text-anchor="middle" font-weight="700" font-size="20" fill="#1e40af">SEIZE PHONE</text>
+          <text x="500" y="95" text-anchor="middle" font-size="16" fill="#1e40af">Follow this guide</text>
+
+          <!-- Power ON? -->
+          <rect x="350" y="150" width="300" height="100" rx="16" fill="#f0f9ff" stroke="#93c5fd" stroke-width="3"/>
+          <text x="500" y="190" text-anchor="middle" font-weight="700" font-size="22">Is phone</text>
+          <text x="500" y="220" text-anchor="middle" font-weight="700" font-size="22">powered ON?</text>
+
+          <!-- YES (ON) -->
+          <rect x="100" y="300" width="280" height="100" rx="16" fill="#ecfdf5" stroke="#86efac" stroke-width="3"/>
+          <text x="240" y="350" text-anchor="middle" font-weight="700" font-size="24" fill="#166534">ON</text>
+
+          <!-- NO (OFF) -->
+          <rect x="620" y="300" width="280" height="100" rx="16" fill="#fee2e2" stroke="#fca5a5" stroke-width="3"/>
+          <text x="760" y="350" text-anchor="middle" font-weight="700" font-size="24" fill="#991b1b">OFF</text>
+
+          <!-- Have Passcode? -->
+          <rect x="100" y="450" width="280" height="100" rx="16" fill="#f0f9ff" stroke="#93c5fd" stroke-width="3"/>
+          <text x="240" y="490" text-anchor="middle" font-weight="700" font-size="20">Do you have</text>
+          <text x="240" y="520" text-anchor="middle" font-weight="700" font-size="20">the passcode?</text>
+
+          <!-- ON + PASSCODE -->
+          <rect x="30" y="600" width="240" height="160" rx="16" fill="#d1fae5" stroke="#86efac" stroke-width="3"/>
+          <text x="150" y="640" text-anchor="middle" font-size="18" font-weight="700" fill="#166534">ON + PASSCODE</text>
+          <text x="150" y="670" text-anchor="middle" font-size="16">Unlock → Airplane Mode</text>
+          <text x="150" y="695" text-anchor="middle" font-size="16">Keep charging</text>
+          <text x="150" y="720" text-anchor="middle" font-size="15">Take photos</text>
+          <text x="150" y="745" text-anchor="middle" font-size="14">Bring to lab anytime</text>
+
+          <!-- ON + NO PASSCODE -->
+          <rect x="300" y="600" width="240" height="160" rx="16" fill="#fef3c7" stroke="#f97316" stroke-width="3"/>
+          <text x="420" y="640" text-anchor="middle" font-size="18" font-weight="700" fill="#7c2d12">ON + NO PASSCODE</text>
+          <text x="420" y="670" text-anchor="middle" font-size="16">KEEP ON & CHARGING</text>
+          <text x="420" y="695" text-anchor="middle" font-size="16">Airplane Mode</text>
+          <text x="420" y="720" text-anchor="middle" font-size="15">Take photos</text>
+          <text x="420" y="745" text-anchor="middle" font-size="15" fill="#7c2d12"><tspan font-weight="700">RUSH TO LAB</tspan> (72 hrs)</text>
+
+          <!-- OFF PATH -->
+          <rect x="620" y="450" width="280" height="180" rx="16" fill="#fee2e2" stroke="#fca5a5" stroke-width="3"/>
+          <text x="760" y="490" text-anchor="middle" font-size="20" font-weight="700" fill="#991b1b">LEAVE OFF</text>
+          <text x="760" y="520" text-anchor="middle" font-size="17">Do NOT power on</text>
+          <text x="760" y="550" text-anchor="middle" font-size="16">Photo device</text>
+          <text x="760" y="575" text-anchor="middle" font-size="16">Label: “DO NOT POWER ON”</text>
+          <text x="760" y="600" text-anchor="middle" font-size="15">Deliver to lab ASAP</text>
+
+          <!-- Arrows -->
+          <path d="M500,110 L500,150" stroke="#333" stroke-width="4" marker-end="url(#arrow)"/>
+          <path d="M380,250 L240,300" stroke="#333" stroke-width="4" marker-end="url(#arrow)"/>
+          <path d="M620,250 L760,300" stroke="#333" stroke-width="4" marker-end="url(#arrow)"/>
+          <path d="M240,400 L240,450" stroke="#333" stroke-width="4" marker-end="url(#arrow)"/>
+          <path d="M150,560 L150,600" stroke="#333" stroke-width="4" marker-end="url(#arrow)"/>
+          <path d="M330,560 L420,600" stroke="#333" stroke-width="4" marker-end="url(#arrow)"/>
+          <path d="M760,400 L760,450" stroke="#333" stroke-width="4" marker-end="url(#arrow)"/>
+        </svg>
+
+        <!-- Restart Button Under Flowchart -->
+        <div class="flow-controls no-print">
+          <button id="restartBtnFlow" class="ghost-btn">Restart Guide</button>
+        </div>
+      </div>
+
+      <!-- Step-by-Step Controls -->
+      <div class="card no-print" id="controls" style="display:none">
+        <div class="controls">
+          <button id="backBtn" class="ghost-btn disabled">Back</button>
+          <button id="restartBtn" class="ghost-btn">Restart</button>
+          <button id="printBtn" class="ghost-btn">Print Path</button>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      SWGDE v2.0 • Field use only • <a href="https://www.swgde.org" style="color:var(--blue)">Full Guidance</a>
+    </footer>
+  </div>
 
 <script>
-// Decision tree data
-const tree = {
-    question: "Is the device powered ON?",
-    yes: {
-        question: "Is the device unlocked and accessible?",
-        yes: {
-            result: "Place in airplane mode immediately. If airplane mode is not available, disable radios manually. Document the condition. Preserve using a Faraday bag if needed."
-        },
-        no: {
-            question: "Do you know the passcode?",
-            yes: {
-                result: "Do NOT power off. Keep device powered and place into Faraday protection. Document condition and proceed with logical acquisition as soon as possible."
-            },
-            no: {
-                result: "Do NOT attempt passcode guesses. Place into Faraday protection. Maintain power if possible to prevent encryption lockout. Seek warrant for compelled unlock if applicable."
-            }
-        }
-    },
-    no: {
-        question: "Do you have legal authority (search warrant / consent)?",
-        yes: {
-            result: "Do NOT power on. Keep the device off. Photograph and document it. Transport to lab for controlled boot under forensic workflow."
-        },
-        no: {
-            result: "Leave powered off. Seize and preserve. Obtain legal authority before powering or examining the device."
-        }
-    }
+const nodes = {
+ welcome: {
+    type: 'question',
+    text: 'Is the phone <strong>powered ON</strong>?',
+    options: [
+      { label: 'YES — Screen is on', next: 'on_check_passcode' },
+      { label: 'NO — Screen is off', next: 'on_no' }
+    ]
+  },
+
+  on_check_passcode: {
+    type: 'question',
+    text: 'Do you <strong>have the passcode</strong> (owner gave it or warrant)?',
+    options: [
+      { label: 'YES — I have the passcode', next: 'on_with_passcode' },
+      { label: 'NO — I do NOT have the passcode', next: 'on_no_passcode' }
+    ]
+  },
+
+  on_with_passcode: {
+    type: 'action',
+    title: 'PHONE ON + PASSCODE = SAFE',
+    content: `
+      <div class="action" style="background:#ecfdf5;padding:14px;border-radius:8px">
+        <strong>YOU ARE GOOD — NO RUSH</strong>
+      </div>
+      <ol style="margin:12px 0">
+        <li>Enter passcode to unlock</li>
+        <li>Put in <strong>Airplane Mode</strong></li>
+        <li>Turn off <strong>Wi-Fi & Bluetooth</strong></li>
+        <li>Keep <strong>powered and charging</strong></li>
+        <li>Take photos of screen</li>
+        <li>Bag it (Faraday bag if unable to place in airplane mode)</li>
+      </ol>
+      <p><strong>Bring to lab when convenient/When legal authority is obtained</strong> — no 72-hour timer.</p>
+      <p class="print-only" style="margin-top:16px;font-size:0.9rem">
+        <strong>Chain of Custody:</strong> Device ON at seizure. Passcode: [________]. Airplane mode enabled. Photos taken. Transported charged.
+      </p>
+    `
+  },
+
+  on_no_passcode: {
+    type: 'action',
+    title: 'PHONE ON + NO PASSCODE = <span style="color:#dc2626;font-weight:700;">RUSH!</span>',
+    content: `
+      <div class="urgent">
+        <strong>72-HOUR TIMER IS RUNNING!</strong><br>
+        iPhone will reboot and lose access to <strong>USER</strong> data.
+      </div>
+      <ol style="margin:12px 0">
+        <li><strong>KEEP IT ON AND CHARGING</strong></li>
+        <li>Put in <strong>Airplane Mode</strong></li>
+        <li>Turn off <strong>Wi-Fi & Bluetooth</strong></li>
+        <li><strong>DO NOT REBOOT</strong></li>
+        <li>Take photos: battery %, notifications</li>
+        <li>Bag it (Faraday if available)</li>
+      </ol>
+      <p><strong>RUSH TO DIGITAL FORENSICS LAB — WITHIN 72 HOURS</strong></p>
+      <p class="print-only" style="margin-top:16px;font-size:0.9rem">
+        <strong>Chain of Custody:</strong> Device ON at seizure. NO passcode. Airplane mode enabled. Battery: __%. RUSH TO LAB.
+      </p>
+    `
+  },
+
+  on_no: {
+    type: 'action',
+    title: 'PHONE IS OFF — LEAVE IT OFF',
+    content: `
+      <div class="action" style="background:#f0f9ff;padding:14px;border-radius:8px">
+        <strong>DO NOT TURN IT ON</strong><br>
+      </div>
+      <ul style="margin:12px 0">
+		<li><strong>Did you ask for the pass code?</strong></li>
+        <li>Photograph device (ports, damage, IMEI)</li>
+        <li>Place in evidence bag</li>
+        <li>Label: <strong>“DO NOT POWER ON”</strong></li>
+        <li>Deliver to Digital Forensics Lab</li>
+      </ul>
+      <p class="print-only" style="margin-top:16px;font-size:0.9rem">
+        <strong>Chain of Custody:</strong> Device OFF at seizure. No power applied. Labeled “DO NOT POWER ON”.
+      </p>
+    `
+  }
 };
 
-// App logic
-function renderNode(node) {
-    const content = document.getElementById("content");
+let history = [];
 
-    // If node is a result
-    if (node.result) {
-        content.innerHTML = `<div class='result'><strong>Recommended Action:</strong><br>${node.result}</div>`;
-        return;
+// Render node
+function render(id) {
+  const node = nodes[id];
+  if (!node) return;
+  const canvas = document.getElementById('canvas');
+  canvas.style.display = 'block';
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('controls').style.display = 'block';
+  document.getElementById('flowchart').classList.remove('visible');
+  canvas.innerHTML = '';
+
+  const el = document.createElement('div');
+  el.className = 'card';
+
+  if (node.type === 'info') {
+    el.innerHTML = `<h3 style="margin-top:0">${node.title}</h3><div>${node.content}</div>
+      ${node.next ? `<button class="big-btn action" id="continue">Continue</button>` : ''}`;
+    if (node.next) {
+      el.querySelector('#continue').onclick = () => {
+        history.push(id);
+        render(node.next);
+      };
     }
+  }
 
-    // If node is a question
-    content.innerHTML = `
-        <div class="question">${node.question}</div>
-        <button id="yesBtn">Yes</button>
-        <button id="noBtn">No</button>
-    `;
+  else if (node.type === 'question') {
+    el.innerHTML = `<p style="font-weight:600;font-size:1.1rem">${node.text}</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${node.options.map(o => `<button class="big-btn ${o.label.includes('YES')?'yes':'no'}" data-next="${o.next}">${o.label}</button>`).join('')}
+      </div>`;
+    el.querySelectorAll('[data-next]').forEach(btn => {
+      btn.onclick = () => {
+        history.push(id);
+        render(btn.dataset.next);
+      };
+    });
+  }
 
-    document.getElementById("yesBtn").onclick = () => renderNode(node.yes);
-    document.getElementById("noBtn").onclick = () => renderNode(node.no);
+  else if (node.type === 'action') {
+    el.innerHTML = `<h3 style="margin-top:0">${node.title}</h3><div>${node.content}</div>`;
+  }
+
+  canvas.appendChild(el);
+  updateBack();
 }
 
-// Initialize
-renderNode(tree);
+function updateBack() {
+  const btn = document.getElementById('backBtn');
+  btn.disabled = history.length === 0;
+  btn.classList.toggle('disabled', history.length === 0);
+  btn.onclick = () => {
+    history.pop();
+    const prev = history[history.length - 1];
+    if (prev) render(prev);
+    else {
+      document.getElementById('canvas').style.display = 'none';
+      document.getElementById('home').style.display = 'block';
+      document.getElementById('controls').style.display = 'none';
+    }
+  };
+}
+
+// Restart from flowchart
+document.getElementById('restartBtnFlow')?.addEventListener('click', () => {
+  history = [];
+  document.getElementById('flowchart').classList.remove('visible');
+  document.getElementById('home').style.display = 'block';
+  document.getElementById('controls').style.display = 'none';
+});
+
+// UI
+document.getElementById('startGuide').onclick = () => { history = []; render('welcome'); };
+document.getElementById('showFlowchart').onclick = () => {
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('canvas').style.display = 'none';
+  document.getElementById('controls').style.display = 'block';
+  document.getElementById('flowchart').classList.add('visible');
+  document.getElementById('backBtn').onclick = () => {
+    document.getElementById('flowchart').classList.remove('visible');
+    document.getElementById('home').style.display = 'block';
+    document.getElementById('controls').style.display = 'none';
+  };
+};
+document.getElementById('restartBtn').onclick = () => {
+  history = [];
+  document.getElementById('canvas').style.display = 'none';
+  document.getElementById('home').style.display = 'block';
+  document.getElementById('controls').style.display = 'none';
+  document.getElementById('flowchart').classList.remove('visible');
+};
+document.getElementById('printBtn').onclick = () => window.print();
+
+// Start on home
+document.getElementById('canvas').style.display = 'none';
+document.getElementById('controls').style.display = 'none';
 </script>
 </body>
 </html>
